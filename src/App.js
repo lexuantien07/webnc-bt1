@@ -1,26 +1,23 @@
 import "./App.css";
 import React, { useState } from "react";
 
-function Square({ value, onSquareClick, isWinnerSquare }) {
-  //add
-  const className = isWinnerSquare ? "square winner" : "square";
-  //end
+function Square({ value, onSquareClick, isResultSquare }) {
+  const className = isResultSquare ? "square winner" : "square";
   return (
     <button className={className} onClick={onSquareClick}>
       {value}
     </button>
   );
 }
-function Board({ xIsNext, squares, onPlay, winnerLine }) {
+function Board({ xIsNext, squares, onPlay, resultLine }) {
   function renderSquare(i) {
-    // return <Square value={squares[i]} onSquareClick={() => handleClick(i)} />;
-    const isWinnerSquare = winnerLine && winnerLine.includes(i);
+    const isResultSquare = resultLine && resultLine.includes(i);
     return (
       <Square
         key={i}
         value={squares[i]}
         onSquareClick={() => handleClick(i)}
-        isWinnerSquare={isWinnerSquare}
+        isResultSquare={isResultSquare}
       />
     );
   }
@@ -92,7 +89,6 @@ function Board({ xIsNext, squares, onPlay, winnerLine }) {
 }
 
 let App = function Game() {
-  // const [history, setHistory] = useState([Array(9).fill(null)]);
   // useState for location
   const [history, setHistory] = useState([
     { squares: Array(9).fill(null), location: null },
@@ -105,7 +101,6 @@ let App = function Game() {
   const [isAscending, setIsAscending] = useState(true);
 
   function handlePlay(nextSquares) {
-    // const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     const nextHistory = history.slice(0, currentMove + 1);
     const location = getLocation(nextSquares, currentSquares);
     nextHistory.push({ squares: nextSquares, location });
@@ -117,19 +112,6 @@ let App = function Game() {
     setCurrentMove(nextMove);
   }
 
-  // const moves = history.map((squares, move) => {
-  //   let description;
-  //   if (move > 0) {
-  //     description = "Go to move #" + move;
-  //   } else {
-  //     description = "Go to game start";
-  //   }
-  //   return (
-  //     <li key={move}>
-  //       <button onClick={() => jumpTo(move)}>{description}</button>
-  //     </li>
-  //   );
-  // });
   // For the current move only, show “You are at move #…” instead of a button
   // Display the location for each move in the format (row, col) in the move history list
   const moves = history.map((squares, move) => {
@@ -162,18 +144,7 @@ let App = function Game() {
     moves.reverse();
   }
 
-  const winnerLine = calculateWinner(currentSquares);
-
-  // return (
-  //   <div className="game">
-  //     <div className="game-board">
-  //       <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-  //     </div>
-  //     <div className="game-info">
-  //       <ol>{moves}</ol>
-  //     </div>
-  //   </div>
-  // );
+  const resultLine = calculateWinner(currentSquares);
 
   return (
     <div className="game">
@@ -182,12 +153,12 @@ let App = function Game() {
           xIsNext={xIsNext}
           squares={currentSquares}
           onPlay={handlePlay}
-          winnerLine={winnerLine}
+          resultLine={resultLine}
         />
       </div>
       <div className="game-info">
         <div>
-          <button onClick={toggleSort}>Toggle Sort</button>
+          <button onClick={toggleSort}>Sort</button>
         </div>
         <ol>{moves}</ol>
       </div>
